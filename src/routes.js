@@ -10,6 +10,7 @@ routes.get("/", (req, res) => {
 
 routes.post("/login", auth.login);
 routes.post("/token", auth.refreshToken);
+routes.delete("/logout", requireValidToken, auth.logout);
 
 routes.all("/profile", requireValidToken);
 

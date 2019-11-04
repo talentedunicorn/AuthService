@@ -13,5 +13,7 @@ module.exports = {
   saveToken: token =>
     db.none("INSERT INTO refreshtokens (token) VALUES($1)", [token]),
   findToken: token =>
-    db.one("SELECT token FROM refreshtokens WHERE token = $1", [token])
+    db.one("SELECT token FROM refreshtokens WHERE token = $1", [token]),
+  deleteToken: token =>
+    db.none("DELETE FROM refreshtokens WHERE token = $1", [token])
 };

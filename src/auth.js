@@ -42,6 +42,18 @@ module.exports = {
         const newToken = generateToken({ username: data.username });
         res.status(200).send({ data: { token: newToken } });
       })
-      .catch(e => res.status(401).send({ data: "Invalid token", error: e }));
+      .catch(e => res.status(401).send({ data: "Invalid token" }));
+  },
+  logout: (req, res) => {
+    const token = req.body.token;
+
+    if (!token) {
+      return res.status(400).send({ data: "Missing token" });
+    }
+
+    dbService
+      .deleteToken(token)
+      .then(_ => res.status(204).send({ data: "logged out" }))
+      .catch(_ => res.status(500).send({ data: "Error logging out" }));
   }
 };
