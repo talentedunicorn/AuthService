@@ -8,7 +8,8 @@ routes.get("/", (req, res) => {
   res.status(200).json({ data: "Pinged Auth Service..." });
 });
 
-routes.post("/auth", auth);
+routes.post("/login", auth.login);
+routes.post("/token", auth.refreshToken);
 
 routes.all("/profile", requireValidToken);
 
