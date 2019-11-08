@@ -4,15 +4,13 @@
 
 ## Dependencies
 
-- [PostgreSQL Database](https://postgresql.org/)
+- A database supported by [sequelize](https://sequelize.org/v5/index.html)
 
-## Assumptions
+## Running
 
-- A database exists with table `users`
-  - Users table has `username` and `password` fields
-  - A user exists with `username`:`valid@mail.com` and `password`:`p@s5w0rD`
-- A database exists with table `refreshtokens`
-  - Should have field `token`
+- Run database creation (if not created) `npx sequelize db:create`
+- Run migrations `npx sequelize db:migrate:all`
+- (Optional) Seed database with test data `npx sequelize db:seed:all`
 
 ## Specifications
 
