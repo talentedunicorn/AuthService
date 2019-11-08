@@ -44,7 +44,11 @@ module.exports = {
       where: {
         userId
       }
+    }),
+  deleteToken: token =>
+    Token.destroy({
+      where: {
+        token
+      }
     })
-  // deleteToken: token =>
-  //   db.none("DELETE FROM refreshtokens WHERE token = $1", [token]),
 };

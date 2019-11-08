@@ -52,7 +52,10 @@ module.exports = {
     const token = req.body.token;
     dbService
       .findToken(token)
-      .then(_ => {
+      .then(userToken => {
+        if (userToken.length === 0) {
+          reject();
+        }
         // Get data from refresh token. In this case username. Avoid passing the whole thing
         const data = verifyRefreshToken(token);
         const newToken = generateToken({ username: data.username });
