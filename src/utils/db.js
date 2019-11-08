@@ -1,19 +1,50 @@
 "use strict";
-const initOptions = {};
 
-const pgp = require("pg-promise")(initOptions);
-const db = pgp(process.env.DATABASE_STRING);
+const bcrypt = require("bcrypt");
+const User = require("../models").User;
+const Token = require("../models").auth_token;
 
 module.exports = {
-  authenticateUser: (username, password) =>
-    db.one(
-      "SELECT username FROM users WHERE username = $1 AND password = crypt($2, password)",
-      [username, password]
-    ),
-  saveToken: token =>
-    db.none("INSERT INTO refreshtokens (token) VALUES($1)", [token]),
+  authenticateUser: (username, password) => {
+    return User.findOne({
+      attributes: ["id", "email", "fullName", "password"],
+      where: {
+        email: username
+      }
+    }).then(data => {
+      const isPasswordValid = bcrypt.compareSync(
+        password,
+        data.dataValues.password
+      );
+
+      return new Promise((resolve, reject) => {
+        if (!isPasswordValid) reject();
+
+        resolve({
+          id: data.dataValues.id,
+          email: data.dataValues.email,
+          fullName: data.dataValues.fullName
+        });
+      });
+    });
+  },
+  saveToken: (token, userId) =>
+    Token.create({
+      token,
+      userId
+    }).catch(e => console.log(e)),
   findToken: token =>
-    db.one("SELECT token FROM refreshtokens WHERE token = $1", [token]),
-  deleteToken: token =>
-    db.none("DELETE FROM refreshtokens WHERE token = $1", [token])
+    Token.findAll({
+      where: {
+        token
+      }
+    }),
+  deleteUserTokens: userId =>
+    Token.destroy({
+      where: {
+        userId
+      }
+    })
+  // deleteToken: token =>
+  //   db.none("DELETE FROM refreshtokens WHERE token = $1", [token]),
 };
