@@ -22,11 +22,26 @@ module.exports = {
       .then(user => {
         const token = generateToken(user);
         const refreshToken = generateRefreshToken(user);
-        // Save refresh token to database
-        return dbService
-          .saveToken(refreshToken)
-          .then(_ => res.status(200).send({ data: { token, refreshToken } }))
-          .catch(e => res.status(500).send({ data: e }));
+
+        // res.status(200).send({ data: { token, refreshToken } })
+        return {
+          token,
+          refreshToken,
+          userId: user.id
+        };
+      })
+      .then(({ token, refreshToken, userId }) => {
+        // Delete existing refreshTokens
+        dbService.deleteUserTokens(userId).then(_ => {
+          // Save new refreshToken and associate with user
+          dbService
+            .saveToken(refreshToken, userId)
+            .then(_ => {
+              console.log("Saved token");
+              return res.status(200).send({ data: { token, refreshToken } });
+            })
+            .catch(e => res.status(500).send({ data: e }));
+        });
       })
       .catch(e => {
         return res.status(401).send({ message: "Invalid credentials" });
@@ -36,7 +51,8 @@ module.exports = {
     const token = req.body.token;
     dbService
       .findToken(token)
-      .then(({ token }) => {
+      .then(userTokens => {
+        console.log(`Found token: ${userTokens.auth}`);
         // Get data from refresh token. In this case username. Avoid passing the whole thing
         const data = verifyRefreshToken(token);
         const newToken = generateToken({ username: data.username });
