@@ -14,6 +14,7 @@ module.exports = {
 
     if (!username || !password) {
       res.status(400).send();
+      return false;
     }
 
     // Contact DB and verify user
@@ -51,8 +52,7 @@ module.exports = {
     const token = req.body.token;
     dbService
       .findToken(token)
-      .then(userTokens => {
-        console.log(`Found token: ${userTokens.auth}`);
+      .then(_ => {
         // Get data from refresh token. In this case username. Avoid passing the whole thing
         const data = verifyRefreshToken(token);
         const newToken = generateToken({ username: data.username });
