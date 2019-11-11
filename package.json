@@ -2,7 +2,7 @@
   "name": "AuthService",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "Eze <eze.mangalu@bigpayme.com>",
+  "author": "Talentedunicorn <dev@talentedunicorn.com>",
   "license": "MIT",
   "scripts": {
     "dev": "nodemon index.js",
